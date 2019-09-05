@@ -13,9 +13,9 @@ namespace gcgcg
         private void GerarPtosCirculos() 
         {
             base.PontosRemoverTodos();
-            for (double i = .0; i <= 72.0; i++) 
+            for (double i = .0; i <= 720000.0; i++) 
             {
-                double theta = 2.0 * Math.PI * i / 72.0;
+                double theta = 2.0 * Math.PI * i / 720000.0;
 
                 double x = 100.0 * Math.Sin(theta);
                 double y = 100.0 * Math.Cos(theta);
