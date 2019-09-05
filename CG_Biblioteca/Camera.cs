@@ -20,7 +20,7 @@ namespace CG_Biblioteca
     /// <param name="yMax"></param>
     /// <param name="zMin"></param>
     /// <param name="zMax"></param>
-    public Camera(double xMin = 0,double xMax = 600,double yMin = 0,double yMax = 600,double zMin = -1, double zMax = 1)
+    public Camera(double xMin = -300,double xMax = 300,double yMin = -300,double yMax = 300,double zMin = -1, double zMax = 600)
     {
       this.xMin = xMin; this.xMax = xMax;
       this.yMin = yMin; this.yMax = yMax;
@@ -38,12 +38,16 @@ namespace CG_Biblioteca
     public void panCim() { yMin -= 2; yMax -= 2; }
     public void panBai() { yMin += 2; yMax += 2; }
 //TODO: falta testa os limites de zoom    
-    public void zoomIn() { 
-      xMin += 2; xMax -= 2; yMin += 2; yMax -= 2; 
+    public void zoomIn() {
+      if (zMin >= xMin && zMin >= yMin){
+        xMin += 2; xMax -= 2; yMin += 2; yMax -= 2; 
+      }
     }
 //TODO: falta testa os limites de zoom    
     public void zoomOut() { 
-      xMin -= 2; xMax += 2; yMin -= 2; yMax += 2; 
+      if (zMax >= xmax && zMax >= yMax){
+        xMin -= 2; xMax += 2; yMin -= 2; yMax += 2; 
+      }
     }
 
   }

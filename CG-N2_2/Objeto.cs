@@ -7,8 +7,8 @@ namespace gcgcg
   internal abstract class Objeto
   {
     private string rotulo;
-    private PrimitiveType primitivaTipo = PrimitiveType.LineLoop;
-    private float primitivaTamanho = 2;
+    private PrimitiveType primitivaTipo = PrimitiveType.Points;
+    private float primitivaTamanho = 7;
 
 
     public Objeto(string rotulo)

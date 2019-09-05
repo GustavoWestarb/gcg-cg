@@ -8,91 +8,106 @@ using CG_Biblioteca;
 
 namespace gcgcg
 {
-  class Mundo : GameWindow
-  {
-    Camera camera = new Camera();
-    protected List<Objeto> objetosLista = new List<Objeto>();
-    private bool moverPto = false;
-    private Retangulo retanguloA;
-    private Retangulo retanguloB;
-
-    public Mundo(int width, int height) : base(width, height) { }
-
-    protected override void OnLoad(EventArgs e)
+    class Mundo : GameWindow
     {
-      base.OnLoad(e);
+        Camera camera = new Camera();
+        protected List<Objeto> objetosLista = new List<Objeto>();
+        private bool moverPto = false;
 
-      retanguloA = new Retangulo("A",new Ponto4D( 50,  50,0),new Ponto4D(150,150,0));
-      retanguloB = new Retangulo("B",new Ponto4D( 50, 150,0),new Ponto4D(150,250,0));
-      objetosLista.Add(retanguloA);
-      objetosLista.Add(retanguloB);
+        private Circulo circuloA;
 
-      GL.ClearColor(Color.Gray);
+        public Mundo(int width, int height) : base(width, height) { }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            circuloA = new Circulo("A");
+            objetosLista.Add(circuloA);
+
+            GL.ClearColor(Color.Gray);
+        }
+        protected override void OnUpdateFrame(FrameEventArgs e)
+        {
+            base.OnUpdateFrame(e);
+
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadIdentity();
+            GL.Ortho(camera.xmin, camera.xmax, camera.ymin, camera.ymax, camera.zmin, camera.zmax);
+        }
+        protected override void OnRenderFrame(FrameEventArgs e)
+        {
+            base.OnRenderFrame(e);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.MatrixMode(MatrixMode.Modelview);
+
+            Sru3D();
+
+            for (var i = 0; i < objetosLista.Count; i++)
+            {
+                objetosLista[i].Desenhar();
+            }
+
+            this.SwapBuffers();
+        }
+
+        protected override void OnKeyDown(OpenTK.Input.KeyboardKeyEventArgs e)
+        {
+
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    Exit();
+                    break;
+                case Key.M:
+                    moverPto = !moverPto;
+                    break;
+                case Key.E:
+                    camera.panEsq();
+                    break;
+                case Key.D:
+                    camera.panDir();
+                    break;
+                case Key.C:
+                    camera.panCim();
+                    break;
+                case Key.B:
+                    camera.panBai();
+                    break;
+                case Key.I:
+                    camera.zoomIn();
+                    break;
+                case Key.O:
+                    camera.zoomOut();
+                    break;
+            }
+
+        }
+
+        private void Sru3D()
+        {
+            GL.LineWidth(7);
+            GL.Begin(PrimitiveType.Lines);
+            GL.Color3(Color.Red);
+            GL.Vertex3(0, 0, 0); GL.Vertex3(200, 0, 0);
+            GL.Color3(Color.Green);
+            GL.Vertex3(0, 0, 0); GL.Vertex3(0, 200, 0);
+            GL.Color3(Color.Blue);
+            GL.Vertex3(0, 0, 0); GL.Vertex3(0, 0, 200);
+            GL.End();
+        }
+
     }
-    protected override void OnUpdateFrame(FrameEventArgs e)
+
+    class Program
     {
-      base.OnUpdateFrame(e);
-
-      GL.MatrixMode(MatrixMode.Projection);
-      GL.LoadIdentity();
-      GL.Ortho(camera.xmin, camera.xmax, camera.ymin, camera.ymax, camera.zmin, camera.zmax);
-    }
-    protected override void OnRenderFrame(FrameEventArgs e)
-    {
-      base.OnRenderFrame(e);
-
-      GL.Clear(ClearBufferMask.ColorBufferBit);
-      GL.MatrixMode(MatrixMode.Modelview);
-
-      Sru3D();
-
-      for (var i = 0; i < objetosLista.Count; i++)
-      {
-        objetosLista[i].Desenhar();
-      }
-
-      this.SwapBuffers();
-    }
-
-    protected override void OnKeyDown(OpenTK.Input.KeyboardKeyEventArgs e)
-    {
-      if (e.Key == Key.Escape)
-        Exit();
-      else
-        if (e.Key == Key.M) {
-          moverPto = !moverPto;
+        static void Main(string[] args)
+        {
+            Mundo window = new Mundo(600, 600);
+            window.Title = "CG_Template";
+            window.Run(1.0 / 60.0);
         }
     }
 
-    protected override void OnMouseMove(MouseMoveEventArgs e) { 
-      if (moverPto) {
-        retanguloB.MoverPtoSuperiorDireito(new Ponto4D(e.Position.X,600-e.Position.Y,0));
-      }
-    }
-
-    private void Sru3D()
-    {
-      GL.LineWidth(1);
-      GL.Begin(PrimitiveType.Lines);
-      GL.Color3(Color.Red);
-      GL.Vertex3(0, 0, 0); GL.Vertex3(200, 0, 0);
-      GL.Color3(Color.Green);
-      GL.Vertex3(0, 0, 0); GL.Vertex3(0, 200, 0);
-      GL.Color3(Color.Blue);
-      GL.Vertex3(0, 0, 0); GL.Vertex3(0, 0, 200);
-      GL.End();
-    }
-
-  }
-
-  class Program
-  {
-    static void Main(string[] args)
-    {
-      Mundo window = new Mundo(600, 600);
-      window.Title = "CG_Template";
-      window.Run(1.0 / 60.0);
-    }
-  }
-  
 }

@@ -14,8 +14,8 @@ namespace gcgcg
 
     protected override void DesenharAramado()
     {
-      GL.LineWidth(base.PrimitivaTamanho);
-      GL.Color3(Color.White);
+      GL.PointSize(base.PrimitivaTamanho);
+      GL.Color3(Color.Yellow);
       GL.Begin(base.PrimitivaTipo);
       foreach (Ponto4D pto in pontosLista)
       {
