@@ -63,24 +63,6 @@ namespace gcgcg
                 case Key.M:
                     moverPto = !moverPto;
                     break;
-                case Key.E:
-                    camera.panEsq();
-                    break;
-                case Key.D:
-                    camera.panDir();
-                    break;
-                case Key.C:
-                    camera.panCim();
-                    break;
-                case Key.B:
-                    camera.panBai();
-                    break;
-                case Key.I:
-                    camera.zoomIn();
-                    break;
-                case Key.O:
-                    camera.zoomOut();
-                    break;
             }
 
         }
