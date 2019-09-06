@@ -14,16 +14,23 @@ namespace gcgcg
         protected List<Objeto> objetosLista = new List<Objeto>();
         private bool moverPto = false;
 
-        private Circulo circuloA;
-
         public Mundo(int width, int height) : base(width, height) { }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            circuloA = new Circulo("A");
+
+            var circuloA = new Circulo("A", 0, 100, Color.Black, 100);
+            var circuloB = new Circulo("B", 100, -100, Color.Black, 100);
+            var circuloC = new Circulo("C", -100, -100, Color.Black, 100);
+
             objetosLista.Add(circuloA);
+            objetosLista.Add(circuloB);
+            objetosLista.Add(circuloC);
+
+            
+
 
             GL.ClearColor(Color.Gray);
         }

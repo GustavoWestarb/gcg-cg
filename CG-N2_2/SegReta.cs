@@ -5,9 +5,14 @@ namespace gcgcg
 {
     internal class SegReta : ObjetoAramado
     {
-        public SegReta(string rotulo) : base(rotulo)
+        public SegReta(string rotulo, double pointX, double pointY) : base(rotulo)
         {
             
+        }
+
+        protected override void DesenharAramado()
+        {
+
         }
     }
 }

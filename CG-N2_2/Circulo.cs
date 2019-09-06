@@ -1,26 +1,107 @@
 using System;
+using System.Drawing;
 using CG_Biblioteca;
+using OpenTK.Graphics.OpenGL;
 
 namespace gcgcg
 {
     internal class Circulo : ObjetoAramado
     {
-        public Circulo(string rotulo) : base(rotulo)
+        private double _raio;
+        private int _size;
+        private Color _color;
+        private int _positionX;
+        private int _positionY;
+
+
+        #region Getters and Setters
+        public double Raio
         {
-            GerarPtosCirculos();
+            get
+            {
+                return _raio;
+            }
+            private set
+            {
+                _raio = value;
+            }
         }
 
-        private void GerarPtosCirculos() 
+        public int Size
         {
-            base.PontosRemoverTodos();
+            get
+            {
+                return _size;
+            }
+            private set
+            {
+                _size = value;
+            }
+        }
+
+        public Color Color
+        {
+            get
+            {
+                return _color;
+            }
+            private set
+            {
+                _color = value;
+            }
+        }
+
+        public int PositionX
+        {
+            get
+            {
+                return _positionX;
+            }
+            private set
+            {
+                _positionX = value;
+            }
+        }
+
+        public int PositionY
+        {
+            get
+            {
+                return _positionY;
+            }
+            private set
+            {
+                _positionY = value;
+            }
+        }
+        #endregion
+
+        public Circulo(string rotulo, int positionX, int positionY, Color color, double raio, int size = 5) : base(rotulo)
+        {
+            _positionX = positionX;
+            _positionY = positionY;
+            _color = color;
+            _raio = raio;
+            _size = size;
+        }
+
+        protected override void DesenharAramado()
+        {
+            
+            GL.PointSize(_size);
+            GL.Begin(PrimitiveType.Points);
+            GL.Color3(_color);
+            var mat = new Matematica();
+            double angulo = 0;
+
             for (double i = .0; i <= 72.0; i++) 
             {
-                double theta = 2.0 * Math.PI * i / 72.0;
-
-                double x = 100.0 * Math.Sin(theta);
-                double y = 100.0 * Math.Cos(theta);
-                base.PontosAdicionar(new Ponto4D(x, y));
+                var ponto = mat.ptoCirculo(angulo, _raio);
+                GL.Vertex2(ponto.X + _positionX, ponto.Y + _positionY);
+                angulo += 5;
             }
+            
+            GL.End();
         }
     }
 }
