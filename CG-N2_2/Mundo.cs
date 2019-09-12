@@ -27,10 +27,18 @@ namespace gcgcg
 
             objetosLista.Add(circuloA);
             objetosLista.Add(circuloB);
-            objetosLista.Add(circuloC);
+            objetosLista.Add(circuloC);            
 
-            
+            var segRetaA = new SegReta("D", circuloA.RetornarPontosCentro(), circuloB.RetornarPontosCentro(),
+            5, Color.LightBlue); 
+            var segRetaB = new SegReta("E", circuloA.RetornarPontosCentro(), circuloC.RetornarPontosCentro(),
+            5, Color.LightBlue);
+            var segRetaC = new SegReta("F", circuloB.RetornarPontosCentro(), circuloC.RetornarPontosCentro(),
+            5, Color.LightBlue);
 
+            objetosLista.Add(segRetaA);
+            objetosLista.Add(segRetaB);
+            objetosLista.Add(segRetaC);
 
             GL.ClearColor(Color.Gray);
         }

@@ -100,8 +100,13 @@ namespace gcgcg
                 GL.Vertex2(ponto.X + _positionX, ponto.Y + _positionY);
                 angulo += 5;
             }
-            
+
             GL.End();
+        }
+
+        public Ponto4D RetornarPontosCentro()
+        {
+            return new Ponto4D(_positionX, _positionY);
         }
     }
 }
