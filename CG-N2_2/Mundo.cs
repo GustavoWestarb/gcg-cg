@@ -11,8 +11,22 @@ namespace gcgcg
     class Mundo : GameWindow
     {
         Camera camera = new Camera();
+        private PrimitiveType _type = PrimitiveType.Points;
+        private List<PrimitiveType> ValidsTypes = new List<PrimitiveType>() 
+        {
+            PrimitiveType.Lines,
+            PrimitiveType.LineLoop,
+            PrimitiveType.LineStrip,
+            PrimitiveType.Triangles,
+            PrimitiveType.TriangleStrip,
+            PrimitiveType.TriangleFan,
+            PrimitiveType.Quads,
+            PrimitiveType.QuadStrip,
+            PrimitiveType.Polygon
+        };
+        private int IndexType = 0;
         protected List<Objeto> objetosLista = new List<Objeto>();
-        private bool moverPto = false;
+        private GenericPoints genericPoints;
 
         public Mundo(int width, int height) : base(width, height) { }
 
@@ -20,25 +34,8 @@ namespace gcgcg
         {
             base.OnLoad(e);
 
-
-            var circuloA = new Circulo("A", 0, 100, Color.Black, 100);
-            var circuloB = new Circulo("B", 100, -100, Color.Black, 100);
-            var circuloC = new Circulo("C", -100, -100, Color.Black, 100);
-
-            objetosLista.Add(circuloA);
-            objetosLista.Add(circuloB);
-            objetosLista.Add(circuloC);            
-
-            var segRetaA = new SegReta("D", circuloA.RetornarPontosCentro(), circuloB.RetornarPontosCentro(),
-            5, Color.LightBlue); 
-            var segRetaB = new SegReta("E", circuloA.RetornarPontosCentro(), circuloC.RetornarPontosCentro(),
-            5, Color.LightBlue);
-            var segRetaC = new SegReta("F", circuloB.RetornarPontosCentro(), circuloC.RetornarPontosCentro(),
-            5, Color.LightBlue);
-
-            objetosLista.Add(segRetaA);
-            objetosLista.Add(segRetaB);
-            objetosLista.Add(segRetaC);
+            genericPoints = new GenericPoints("Teste", _type);
+            objetosLista.Add(genericPoints);
 
             GL.ClearColor(Color.Gray);
         }
@@ -69,17 +66,20 @@ namespace gcgcg
 
         protected override void OnKeyDown(OpenTK.Input.KeyboardKeyEventArgs e)
         {
-
-            switch (e.Key)
+            if (e.Key == Key.Space)
             {
-                case Key.Escape:
-                    Exit();
-                    break;
-                case Key.M:
-                    moverPto = !moverPto;
-                    break;
+                IndexType = ValidsTypes.FindIndex( x => x == _type);
+
+                if (IndexType == 8)
+                {
+                    IndexType = 0;
+                }
+
+                IndexType++;
+                _type = ValidsTypes[IndexType];
             }
 
+            genericPoints.Type = _type;
         }
 
         private void Sru3D()
