@@ -11,6 +11,20 @@ namespace gcgcg
     class Mundo : GameWindow
     {
         Camera camera = new Camera();
+        private static Ponto4D _pontoA = new Ponto4D(-200, -200);
+        private static Ponto4D _pontoB = new Ponto4D(-200, 200);
+        private static Ponto4D _pontoC = new Ponto4D(200, 200);
+        private static Ponto4D _pontoD = new Ponto4D(200, -200);
+        private static SegReta _segRetaA = new SegReta("A", _pontoA, _pontoB, 100, Color.Cyan);
+        private static SegReta _segRetaB = new SegReta("B", _pontoB, _pontoC, 100, Color.Cyan);
+        private static SegReta _segRetaC = new SegReta("C", _pontoC, _pontoD, 100, Color.Cyan);
+        private static Ponto _pontoAA = new Ponto("AA", _pontoA, 20, Color.Black);
+        private static Ponto _pontoBB = new Ponto("BB", _pontoB, 20, Color.Black);
+        private static Ponto _pontoCC = new Ponto("CC", _pontoC, 20, Color.Black);
+        private static Ponto _pontoDD = new Ponto("DD", _pontoD, 20, Color.Red);
+        private static PontoAtual _pontoAtual = PontoAtual.D;
+        private static Spline _spline = new Spline("Spline", _pontoD, _pontoC, _pontoB, _pontoA, 15, Color.Yellow);
+
         protected List<Objeto> objetosLista = new List<Objeto>();
         private bool moverPto = false;
 
@@ -20,25 +34,14 @@ namespace gcgcg
         {
             base.OnLoad(e);
 
-
-            var circuloA = new Circulo("A", 0, 100, Color.Black, 100);
-            var circuloB = new Circulo("B", 100, -100, Color.Black, 100);
-            var circuloC = new Circulo("C", -100, -100, Color.Black, 100);
-
-            objetosLista.Add(circuloA);
-            objetosLista.Add(circuloB);
-            objetosLista.Add(circuloC);            
-
-            var segRetaA = new SegReta("D", circuloA.RetornarPontosCentro(), circuloB.RetornarPontosCentro(),
-            5, Color.LightBlue); 
-            var segRetaB = new SegReta("E", circuloA.RetornarPontosCentro(), circuloC.RetornarPontosCentro(),
-            5, Color.LightBlue);
-            var segRetaC = new SegReta("F", circuloB.RetornarPontosCentro(), circuloC.RetornarPontosCentro(),
-            5, Color.LightBlue);
-
-            objetosLista.Add(segRetaA);
-            objetosLista.Add(segRetaB);
-            objetosLista.Add(segRetaC);
+            objetosLista.Add(_spline);
+            objetosLista.Add(_segRetaA);
+            objetosLista.Add(_segRetaB);
+            objetosLista.Add(_segRetaC);
+            objetosLista.Add(_pontoAA);
+            objetosLista.Add(_pontoBB);
+            objetosLista.Add(_pontoCC);
+            objetosLista.Add(_pontoDD);
 
             GL.ClearColor(Color.Gray);
         }
@@ -70,15 +73,52 @@ namespace gcgcg
         protected override void OnKeyDown(OpenTK.Input.KeyboardKeyEventArgs e)
         {
 
-            switch (e.Key)
-            {
-                case Key.Escape:
-                    Exit();
-                    break;
-                case Key.M:
-                    moverPto = !moverPto;
-                    break;
-            }
+       
+                switch (e.Key)
+                {
+                    case Key.Escape:
+                        Exit();
+                        break;
+                    case Key.Number1:
+                        _pontoAtual = PontoAtual.A;
+                        pintarPonto();
+                        break;
+                    case Key.Number2:
+                        _pontoAtual = PontoAtual.B;
+                        pintarPonto();
+                        break;
+                    case Key.Number3:
+                        _pontoAtual = PontoAtual.C;
+                        pintarPonto();
+                        break;
+                    case Key.Number4:
+                        _pontoAtual = PontoAtual.D;
+                        pintarPonto();
+                        break;
+                    case Key.W:
+                    case Key.C:
+                        moverPonto(0, 5);
+                        break;
+                    case Key.S:
+                    case Key.B:
+                        moverPonto(0, -5);
+                        break;
+                    case Key.A:
+                    case Key.E:
+                        moverPonto(-5, 0);
+                        break;
+                    case Key.D:
+                        moverPonto(5, 0);
+                        break;
+                    case Key.Minus:
+                        _spline.incrementarPontos();
+                        break;
+                    case Key.Plus:
+                        _spline.decrementarPontos();
+                        break;
+                }
+       
+
 
         }
 
@@ -95,7 +135,60 @@ namespace gcgcg
             GL.End();
         }
 
+        private void pintarPonto()
+        {
+            switch (_pontoAtual)
+            {
+                case PontoAtual.A:
+                    _pontoAA.Cor = Color.Red;
+                    _pontoBB.Cor = Color.Black;
+                    _pontoCC.Cor = Color.Black;
+                    _pontoDD.Cor = Color.Black;
+                    break;
+                case PontoAtual.B:
+                    _pontoBB.Cor = Color.Red;
+                    _pontoAA.Cor = Color.Black;
+                    _pontoCC.Cor = Color.Black;
+                    _pontoDD.Cor = Color.Black;
+                    break;
+                case PontoAtual.C:
+                    _pontoCC.Cor = Color.Red;
+                    _pontoAA.Cor = Color.Black;
+                    _pontoBB.Cor = Color.Black;
+                    _pontoDD.Cor = Color.Black;
+                    break;
+                case PontoAtual.D:
+                    _pontoDD.Cor = Color.Red;
+                    _pontoAA.Cor = Color.Black;
+                    _pontoBB.Cor = Color.Black;
+                    _pontoCC.Cor = Color.Black;
+                    break;
+            }
+        }
+        private void moverPonto(double x, double y)
+        {
+            switch (_pontoAtual)
+            {
+                case PontoAtual.A:
+                    _pontoA.X += x;
+                    _pontoA.Y += y;
+                    break;
+                case PontoAtual.B:
+                    _pontoB.X += x;
+                    _pontoB.Y += y;
+                    break;
+                case PontoAtual.C:
+                    _pontoC.X += x;
+                    _pontoC.Y += y;
+                    break;
+                case PontoAtual.D:
+                    _pontoD.X += x;
+                    _pontoD.Y += y;
+                    break;
+            }
+        }
     }
+
 
     class Program
     {

@@ -28,5 +28,16 @@ namespace gcgcg
       GL.Vertex3(_pontoB.X, _pontoB.Y, 0);
       GL.End();
     }
+
+    public void incrementarPosicaoA(double x, double y) 
+    {
+        _pontoA.X += x;
+        _pontoA.Y += y;
+    }
+    public void incrementarPosicaoB(double x, double y) 
+    {
+        _pontoB.X += x;
+        _pontoB.Y += y;
+    }
   }
 }
