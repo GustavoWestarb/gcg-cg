@@ -11,31 +11,19 @@ namespace gcgcg
     class Mundo : GameWindow
     {
         Camera camera = new Camera();
-        private PrimitiveType _type = PrimitiveType.Points;
-        private List<PrimitiveType> ValidsTypes = new List<PrimitiveType>() 
-        {
-            PrimitiveType.Lines,
-            PrimitiveType.LineLoop,
-            PrimitiveType.LineStrip,
-            PrimitiveType.Triangles,
-            PrimitiveType.TriangleStrip,
-            PrimitiveType.TriangleFan,
-            PrimitiveType.Quads,
-            PrimitiveType.QuadStrip,
-            PrimitiveType.Polygon
-        };
-        private int IndexType = 0;
         protected List<Objeto> objetosLista = new List<Objeto>();
-        private GenericPoints genericPoints;
-
+        private Ponto4D _pointA;
+        private Ponto4D _pointB;
+        private SegReta _segLine;
         public Mundo(int width, int height) : base(width, height) { }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            genericPoints = new GenericPoints("Teste", _type);
-            objetosLista.Add(genericPoints);
+            _segLine = new SegReta("Line", 5, Color.Black);
+
+            objetosLista.Add(_segLine);
 
             GL.ClearColor(Color.Gray);
         }
@@ -66,20 +54,27 @@ namespace gcgcg
 
         protected override void OnKeyDown(OpenTK.Input.KeyboardKeyEventArgs e)
         {
-            if (e.Key == Key.Space)
+            switch (e.Key)
             {
-                IndexType = ValidsTypes.FindIndex( x => x == _type);
-
-                if (IndexType == 8)
-                {
-                    IndexType = 0;
-                }
-
-                IndexType++;
-                _type = ValidsTypes[IndexType];
+                case Key.Q:
+                    _segLine.MoveLine(-1);
+                    break;
+                case Key.W:
+                    _segLine.MoveLine(1);
+                    break;
+                case Key.A:
+                    _segLine.ChangeSizeLine(1);
+                    break;
+                case Key.S:
+                    _segLine.ChangeSizeLine(-1);
+                    break;
+                case Key.Z:
+                    _segLine.LoopLine(1);
+                    break;
+                case Key.X:
+                    _segLine.LoopLine(-1);
+                    break;
             }
-
-            genericPoints.Type = _type;
         }
 
         private void Sru3D()
