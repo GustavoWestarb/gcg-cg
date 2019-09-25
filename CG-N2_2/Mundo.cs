@@ -10,32 +10,33 @@ namespace gcgcg
 {
     class Mundo : GameWindow
     {
-        Camera camera = new Camera();
-        private PrimitiveType _type = PrimitiveType.Points;
-        private List<PrimitiveType> ValidsTypes = new List<PrimitiveType>() 
-        {
-            PrimitiveType.Lines,
-            PrimitiveType.LineLoop,
-            PrimitiveType.LineStrip,
-            PrimitiveType.Triangles,
-            PrimitiveType.TriangleStrip,
-            PrimitiveType.TriangleFan,
-            PrimitiveType.Quads,
-            PrimitiveType.QuadStrip,
-            PrimitiveType.Polygon
-        };
-        private int IndexType = 0;
-        protected List<Objeto> objetosLista = new List<Objeto>();
-        private GenericPoints genericPoints;
+        public static Mundo instance = null;
 
         public Mundo(int width, int height) : base(width, height) { }
+
+        public static Mundo getInstance()
+        {
+            if (instance == null)
+                instance = new Mundo(600, 600);
+            return instance;
+        }
+
+        private Camera camera = new Camera();
+        protected List<Objeto> objetosLista = new List<Objeto>();
+        private bool moverPto = false;
+        //FIXME: estes objetos não devem ser atributos do Mundo
+        private Circulo _circuloCentro, _circuloMaior;
+        private const double posicao = 0;
+        private bool _mover = true;
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            genericPoints = new GenericPoints("Teste", _type);
-            objetosLista.Add(genericPoints);
+            _circuloMaior = new Circulo("A", new Ponto4D(posicao, posicao, 0), 100, false, true);
+            _circuloCentro = new Circulo("B", new Ponto4D(posicao, posicao, 0), 25, true);
+            objetosLista.Add(_circuloMaior);
+            objetosLista.Add(_circuloCentro);
 
             GL.ClearColor(Color.Gray);
         }
@@ -46,6 +47,31 @@ namespace gcgcg
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
             GL.Ortho(camera.xmin, camera.xmax, camera.ymin, camera.ymax, camera.zmin, camera.zmax);
+
+            if (_circuloCentro.PontoCentro.X > _circuloMaior.bBox.obterMenorX
+            && _circuloCentro.PontoCentro.X < _circuloMaior.bBox.obterMaiorX
+            && _circuloCentro.PontoCentro.Y > _circuloMaior.bBox.obterMenorY
+            && _circuloCentro.PontoCentro.Y < _circuloMaior.bBox.obterMaiorY)
+            {
+                _circuloMaior.GerarBBox(Color.Pink);
+                _mover = true;
+            }
+            else
+            {
+                double valor = (Convert.ToInt32((_circuloMaior.PontoCentro.X - _circuloCentro.PontoCentro.X)) ^ 2 + Convert.ToInt32((_circuloMaior.PontoCentro.Y - _circuloCentro.PontoCentro.Y)) ^ 2);
+
+                if (valor <= _circuloMaior.Raio)
+                {
+                    _circuloMaior.GerarBBox(Color.Cyan);
+                    _mover = true;
+                }
+                else
+                {
+                    _circuloMaior.GerarBBox(Color.Yellow);
+                    _mover = false;
+                    _circuloCentro.Mover(new Ponto4D(posicao, posicao, 0));
+                }
+            }
         }
         protected override void OnRenderFrame(FrameEventArgs e)
         {
@@ -53,6 +79,7 @@ namespace gcgcg
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
 
             Sru3D();
 
@@ -64,37 +91,26 @@ namespace gcgcg
             this.SwapBuffers();
         }
 
-        protected override void OnKeyDown(OpenTK.Input.KeyboardKeyEventArgs e)
+        protected override void OnMouseMove(MouseMoveEventArgs e)
         {
-            if (e.Key == Key.Space)
+            if (_mover)
             {
-                IndexType = ValidsTypes.FindIndex( x => x == _type);
-
-                if (IndexType == 8)
-                {
-                    IndexType = 0;
-                }
-
-                IndexType++;
-                _type = ValidsTypes[IndexType];
+                _circuloCentro.Mover(new Ponto4D(e.Position.X, 600 - e.Position.Y, 0));
             }
-
-            genericPoints.Type = _type;
         }
 
         private void Sru3D()
         {
-            GL.LineWidth(7);
+            GL.LineWidth(1);
             GL.Begin(PrimitiveType.Lines);
             GL.Color3(Color.Red);
-            GL.Vertex3(0, 0, 0); GL.Vertex3(200, 0, 0);
+            GL.Vertex3(-125, -125, 0); GL.Vertex3(0, -125, 0);
             GL.Color3(Color.Green);
-            GL.Vertex3(0, 0, 0); GL.Vertex3(0, 200, 0);
+            GL.Vertex3(-125, -125, 0); GL.Vertex3(-125, 0, 0);
             GL.Color3(Color.Blue);
             GL.Vertex3(0, 0, 0); GL.Vertex3(0, 0, 200);
             GL.End();
         }
-
     }
 
     class Program
@@ -106,5 +122,4 @@ namespace gcgcg
             window.Run(1.0 / 60.0);
         }
     }
-
 }
