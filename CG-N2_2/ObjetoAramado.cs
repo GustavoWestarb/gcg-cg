@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using CG_Biblioteca;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
+using CG_Biblioteca;
 
 namespace gcgcg
 {
@@ -16,7 +16,7 @@ namespace gcgcg
     {
       GL.LineWidth(base.PrimitivaTamanho);
       GL.Color3(Color.White);
-      GL.Begin(base.PrimitivaTipo);
+      GL.Begin(PrimitivaTipo);
       foreach (Ponto4D pto in pontosLista)
       {
         GL.Vertex2(pto.X, pto.Y);
