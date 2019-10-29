@@ -1,45 +1,45 @@
 using System;
 using System.Collections.Generic;
-using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using CG_Biblioteca;
+using OpenTK.Graphics.OpenGL;
 
-namespace gcgcg
-{
-  internal class ObjetoAramado : Objeto
-  {
-    protected List<Ponto4D> pontosLista = new List<Ponto4D>();
+namespace gcgcg {
+  internal class ObjetoAramado : Objeto {
+    protected List<Ponto4D> pontosLista = new List<Ponto4D> ();
+    protected int ValorCorPosicaoVermelha;
+    protected int ValorCorPosicaoVerde;
+    protected int ValorCorPosicaoAzul;
 
-    public ObjetoAramado(string rotulo) : base(rotulo) { }
-
-    protected override void DesenharAramado()
+    public ObjetoAramado (string rotulo) : base (rotulo) 
     {
-      GL.LineWidth(base.PrimitivaTamanho);
-      GL.Color3(Color.White);
-      GL.Begin(PrimitivaTipo);
-      foreach (Ponto4D pto in pontosLista)
-      {
-        GL.Vertex2(pto.X, pto.Y);
+      this.ValorCorPosicaoVermelha = 255;
+      this.ValorCorPosicaoVerde = 255;
+      this.ValorCorPosicaoAzul = 255;
+    }
+
+    protected override void DesenharAramado () {
+      GL.LineWidth (base.PrimitivaTamanho);
+      GL.Color3 (Color.FromArgb(0, ValorCorPosicaoVermelha, ValorCorPosicaoVerde, ValorCorPosicaoAzul));
+      GL.Begin (PrimitivaTipo);
+      foreach (Ponto4D pto in pontosLista) {
+        GL.Vertex2 (pto.X, pto.Y);
       }
-      GL.End();
+      GL.End ();
     }
 
-    protected void PontosAdicionar(Ponto4D pto)
-    {
-      pontosLista.Add(pto);
+    protected void PontosAdicionar (Ponto4D pto) {
+      pontosLista.Add (pto);
     }
 
-    protected void PontosRemoverTodos()
-    {
-      pontosLista.Clear();
+    protected void PontosRemoverTodos () {
+      pontosLista.Clear ();
     }
 
-    protected override void PontosExibir()
-    {
-      Console.WriteLine("__ Objeto: " + base.rotulo);
-      for (var i = 0; i < pontosLista.Count; i++)
-      {
-        Console.WriteLine("P" + i + "[" + pontosLista[i].X + "," + pontosLista[i].Y + "," + pontosLista[i].Z + "," + pontosLista[i].W + "]");
+    protected override void PontosExibir () {
+      Console.WriteLine ("__ Objeto: " + base.rotulo);
+      for (var i = 0; i < pontosLista.Count; i++) {
+        Console.WriteLine ("P" + i + "[" + pontosLista[i].X + "," + pontosLista[i].Y + "," + pontosLista[i].Z + "," + pontosLista[i].W + "]");
       }
     }
   }
