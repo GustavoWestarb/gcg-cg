@@ -13,8 +13,9 @@ namespace gcgcg
 
             foreach (Objeto objeto in objetosLista)
             {
-                ((Desenho)objeto).AlterarPrimitiva(primeiraVerificacao);
-                ((Desenho)objeto).Redesenhar();
+                Desenho desenho = (Desenho)objeto;
+                desenho.AlterarPrimitiva(primeiraVerificacao);
+                desenho.Redesenhar();
                 primeiraVerificacao = false;
             }
         }
