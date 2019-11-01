@@ -47,5 +47,15 @@ namespace gcgcg
         objetosLista[i].PontosExibirObjeto();
       }
     }
+
+    public void DesenharBB(List<Ponto4D> pontos)
+    {
+      foreach(var ponto in pontos)
+      {
+        bBox.Atribuir(ponto);
+      }
+
+      bBox.Desenhar();
+    }
   }
 }

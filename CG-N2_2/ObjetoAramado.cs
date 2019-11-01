@@ -19,11 +19,11 @@ namespace gcgcg {
     }
 
     protected override void DesenharAramado () {
-      GL.LineWidth (base.PrimitivaTamanho);
-      GL.Color3 (Color.FromArgb(0, ValorCorPosicaoVermelha, ValorCorPosicaoVerde, ValorCorPosicaoAzul));
-      GL.Begin (PrimitivaTipo);
+      GL.LineWidth(base.PrimitivaTamanho);
+      GL.Color3(Color.FromArgb(0, ValorCorPosicaoVermelha, ValorCorPosicaoVerde, ValorCorPosicaoAzul));
+      GL.Begin(PrimitivaTipo);
       foreach (Ponto4D pto in pontosLista) {
-        GL.Vertex2 (pto.X, pto.Y);
+        GL.Vertex2(pto.X, pto.Y);
       }
       GL.End ();
     }

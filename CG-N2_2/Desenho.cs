@@ -66,48 +66,13 @@ namespace gcgcg
             return base.pontosLista;
         }
 
-        public void AlterarValorCorPosicaoVermelhar()
+        public void AlterarCor(Color cor)
         {
-            if (ValorCorPosicaoVermelha >= 255)
-            {
-                ValorCorPosicaoVermelha = 0;
-            }
-            else
-            {
-                ValorCorPosicaoVermelha++;
-            }
-
-            Redesenhar();
+            ValorCorPosicaoVermelha = cor.R;
+            ValorCorPosicaoVerde = cor.G;
+            ValorCorPosicaoAzul = cor.B;
         }
-
-        public void AlterarValorCorPosicaoVerde()
-        {
-            if (ValorCorPosicaoVerde >= 255)
-            {
-                ValorCorPosicaoVerde = 0;
-            }
-            else
-            {
-                ValorCorPosicaoVerde++;
-            }
-
-            Redesenhar();
-        }
-
-        public void AlterarValorCorPosicaoAzul()
-        {
-            if (ValorCorPosicaoAzul >= 255)
-            {
-                ValorCorPosicaoAzul = 0;
-            }
-            else
-            {
-                ValorCorPosicaoAzul++;
-            }
-
-            Redesenhar();
-        }
-
+        
         public void AlterarPrimitiva(bool primeiraVerificacao)
         {
             if (primeiraVerificacao)

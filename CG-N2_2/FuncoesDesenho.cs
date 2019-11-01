@@ -2,22 +2,17 @@ using System;
 using System.Drawing;
 using System.Collections.Generic;
 using CG_Biblioteca;
+using System.Linq;
 
 namespace gcgcg
 {
     internal class FuncoesDesenho
     {
-        public static void AlterarPrimitivaDesenhos(List<Objeto> objetosLista)
+        public static void AlterarPrimitivaDesenhos(List<Desenho> objetosLista)
         {
-            bool primeiraVerificacao = true;
-
-            foreach (Objeto objeto in objetosLista)
-            {
-                Desenho desenho = (Desenho)objeto;
-                desenho.AlterarPrimitiva(primeiraVerificacao);
-                desenho.Redesenhar();
-                primeiraVerificacao = false;
-            }
+            var desenho = objetosLista.Last();
+            desenho.AlterarPrimitiva(true);
+            desenho.Redesenhar();
         }
     }
 }

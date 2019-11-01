@@ -22,7 +22,7 @@ namespace gcgcg
         }
 
         private Camera camera = new Camera();
-        protected List<Objeto> objetosLista = new List<Objeto>();
+        protected List<Desenho> objetosLista = new List<Desenho>();
         private bool moverPto = false;
         private Desenho _novoDesenho;
         private Ponto4D _polignoAtual;
@@ -90,13 +90,16 @@ namespace gcgcg
                     _polignoAtual = null;
                     break;
                 case Key.R:
-                    _novoDesenho.AlterarValorCorPosicaoVermelhar();
+                    _novoDesenho.AlterarCor(Color.Red);
                     break;
                 case Key.G:
-                    _novoDesenho.AlterarValorCorPosicaoVerde();
+                    _novoDesenho.AlterarCor(Color.Green);
                     break;
                 case Key.B:
-                    _novoDesenho.AlterarValorCorPosicaoAzul();
+                    _novoDesenho.AlterarCor(Color.Blue);
+                    break;
+                case Key.A:
+                    _novoDesenho.DesenharBB(_novoDesenho.RetornaListaPontos());
                     break;
             }
         }
