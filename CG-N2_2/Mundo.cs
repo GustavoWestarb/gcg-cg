@@ -26,6 +26,7 @@ namespace gcgcg
         private bool moverPto = false;
         private Desenho _novoDesenho;
         private Ponto4D _polignoAtual;
+        private bool _desenharBB;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -57,6 +58,11 @@ namespace gcgcg
             for (var i = 0; i < objetosLista.Count; i++)
             {
                 objetosLista[i].Desenhar();
+                   
+                if (_desenharBB)
+                {
+                    objetosLista[i].DesenharBB();
+                }
             }
 
             this.SwapBuffers();
@@ -88,6 +94,7 @@ namespace gcgcg
                 case Key.Space:
                     _novoDesenho = null;
                     _polignoAtual = null;
+                    _desenharBB = false;
                     break;
                 case Key.R:
                     _novoDesenho.AlterarCor(Color.Red);
@@ -99,7 +106,7 @@ namespace gcgcg
                     _novoDesenho.AlterarCor(Color.Blue);
                     break;
                 case Key.A:
-                    _novoDesenho.DesenharBB(_novoDesenho.RetornaListaPontos());
+                    _desenharBB = true;
                     break;
             }
         }

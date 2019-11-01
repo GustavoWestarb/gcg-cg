@@ -10,6 +10,12 @@ namespace gcgcg
     private PrimitiveType primitivaTipo = PrimitiveType.LineLoop;
     private float primitivaTamanho = 2;
     private BBox bBox = new BBox();
+
+    public BBox BBox
+    { 
+      get => bBox;
+      set => bBox = value;
+    }
     private List<Objeto> objetosLista = new List<Objeto>();
 
 
@@ -48,13 +54,8 @@ namespace gcgcg
       }
     }
 
-    public void DesenharBB(List<Ponto4D> pontos)
+    public void DesenharBB()
     {
-      foreach(var ponto in pontos)
-      {
-        bBox.Atribuir(ponto);
-      }
-
       bBox.Desenhar();
     }
   }

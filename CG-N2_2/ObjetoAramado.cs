@@ -30,6 +30,16 @@ namespace gcgcg {
 
     protected void PontosAdicionar (Ponto4D pto) {
       pontosLista.Add (pto);
+
+      if (pontosLista.Count.Equals(1))
+      {
+        base.BBox.Atribuir(pto);
+      }
+      else
+      {
+        base.BBox.Atualizar(pto);
+      }
+      base.BBox.ProcessarCentro();
     }
 
     protected void PontosRemoverTodos () {
