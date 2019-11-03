@@ -8,7 +8,12 @@ namespace gcgcg
 {
     internal class Desenho : ObjetoAramado
     {
-        List<Ponto4D> pontos = new List<Ponto4D>();
+        private List<Ponto4D> _pontos = new List<Ponto4D>();
+
+        public List<Ponto4D> Pontos 
+        { 
+            get => pontosLista;
+        }
 
         public Desenho(string rotulo) : base(rotulo)
         {
@@ -18,19 +23,18 @@ namespace gcgcg
         public void AdicionarPonto(Ponto4D ponto)
         {
             base.PontosAdicionar(ponto);
-            base.PontosAdicionar(ponto);
             base.DesenharAramado();
         }
 
         private void SalvarPontos()
         {
-            this.pontos.Clear();
-            this.pontos.AddRange(base.pontosLista);
+            this._pontos.Clear();
+            this._pontos.AddRange(base.pontosLista);
         }
 
         private void AtribuirPontosSalvos()
         {
-            base.pontosLista.AddRange(this.pontos);
+            base.pontosLista.AddRange(this._pontos);
         }
 
         public void MoverUltimoPonto(Ponto4D ponto)
@@ -40,7 +44,6 @@ namespace gcgcg
 
         public void RemoverPonto(Ponto4D ponto)
         {
-            base.pontosLista.RemoveAt(base.pontosLista.Count - 1);
             base.pontosLista.Remove(ponto);
             SalvarPontos();
             base.PontosRemoverTodos();

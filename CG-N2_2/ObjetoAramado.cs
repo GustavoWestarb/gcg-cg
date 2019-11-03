@@ -29,7 +29,7 @@ namespace gcgcg {
     }
 
     protected void PontosAdicionar (Ponto4D pto) {
-      pontosLista.Add (pto);
+      pontosLista.Add(pto);
 
       if (pontosLista.Count.Equals(1))
       {

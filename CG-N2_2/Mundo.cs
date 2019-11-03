@@ -5,6 +5,8 @@ using CG_Biblioteca;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using System.Linq;
+
 
 namespace gcgcg
 {
@@ -23,17 +25,14 @@ namespace gcgcg
 
         private Camera camera = new Camera();
         protected List<Desenho> objetosLista = new List<Desenho>();
-        private bool moverPto = false;
         private Desenho _novoDesenho;
-        private Ponto4D _polignoAtual;
+        private Ponto4D _pontoSelecionado;
+        private int _indiceSelecionado = -1;
         private bool _desenharBB;
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
-            _novoDesenho = new Desenho("A");
-            objetosLista.Add(_novoDesenho);
 
             GL.ClearColor(Color.Gray);
         }
@@ -58,8 +57,7 @@ namespace gcgcg
             for (var i = 0; i < objetosLista.Count; i++)
             {
                 objetosLista[i].Desenhar();
-                   
-                if (_desenharBB)
+                if(i == _indiceSelecionado && _desenharBB) 
                 {
                     objetosLista[i].DesenharBB();
                 }
@@ -82,10 +80,10 @@ namespace gcgcg
                     }
                     break;
                 case Key.D:
-                    if (_polignoAtual != null)
+                    if (_pontoSelecionado != null)
                     {
-                        _novoDesenho.RemoverPonto(_polignoAtual);
-                        _polignoAtual = null;
+                        objetosLista[_indiceSelecionado].RemoverPonto(_pontoSelecionado);
+                        _pontoSelecionado = null;
                     }
                     break;
                 case Key.P:
@@ -93,7 +91,8 @@ namespace gcgcg
                     break;
                 case Key.Space:
                     _novoDesenho = null;
-                    _polignoAtual = null;
+                    _pontoSelecionado = null;
+                    _indiceSelecionado = -1;
                     _desenharBB = false;
                     break;
                 case Key.R:
@@ -113,7 +112,12 @@ namespace gcgcg
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
-            if (_novoDesenho != null && _novoDesenho.RetornarQuantidadePontos() > 0)
+            if (_pontoSelecionado != null)
+            {
+                _pontoSelecionado.X = e.Position.X;
+                _pontoSelecionado.Y = 600 - e.Position.Y;
+            }
+            else if (_novoDesenho != null && _novoDesenho.RetornarQuantidadePontos() > 0)
             {
                 _novoDesenho.MoverUltimoPonto(new Ponto4D(e.Position.X, 600 - e.Position.Y, 0));
             }
@@ -129,13 +133,27 @@ namespace gcgcg
                     objetosLista.Add(_novoDesenho);
                 }
 
-                _polignoAtual = new Ponto4D(e.Position.X, 600 - e.Position.Y, 0);
-                _novoDesenho.AdicionarPonto(_polignoAtual);
+                _pontoSelecionado = new Ponto4D(e.Position.X, 600 - e.Position.Y, 0);
+                _novoDesenho.AdicionarPonto(_pontoSelecionado);
             }
-            else
-            if (e.Button == MouseButton.Right)
+            else if (e.Button == MouseButton.Right)
             {
-                Console.WriteLine("Direito");
+                if (_novoDesenho == null)
+                {
+                    var listaPontos = objetosLista
+                                         .ConvertAll(x => x.Pontos)
+                                         .SelectMany(x => x)
+                                         .ToList();
+                    
+                     _pontoSelecionado = listaPontos.OrderBy(v => Math.Abs(v.Y - (600 - e.Position.Y)) + Math.Abs(v.X - e.Position.X)).First();
+
+
+                    for (int i = 0; i < objetosLista.Count(); i ++) {
+                        if(objetosLista[i].Pontos.Any(x => x == _pontoSelecionado)) {
+                            _indiceSelecionado = i;
+                        }
+                    }
+                }
             }
         }
 
