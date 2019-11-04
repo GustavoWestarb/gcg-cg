@@ -16,8 +16,8 @@ namespace gcgcg
       get => bBox;
       set => bBox = value;
     }
-    private List<Objeto> objetosLista = new List<Objeto>();
 
+    private List<Objeto> objetosLista = new List<Objeto>();
 
     public Objeto(string rotulo)
     {
@@ -30,11 +30,13 @@ namespace gcgcg
     public void Desenhar()
     {
       DesenharAramado();
+
       for (var i = 0; i < objetosLista.Count; i++)
       {
         objetosLista[i].Desenhar();
       }
     }
+
     protected abstract void DesenharAramado();
     public void FilhoAdicionar(Objeto filho)
     {

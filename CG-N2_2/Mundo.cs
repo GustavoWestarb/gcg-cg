@@ -13,8 +13,14 @@ namespace gcgcg
     class Mundo : GameWindow
     {
         private static Mundo instance = null;
-
         private Mundo(int width, int height) : base(width, height) { }
+        private Camera camera = new Camera();
+        protected List<Desenho> objetosLista = new List<Desenho>();
+        private Desenho _novoDesenho;
+        private Ponto4D _pontoSelecionado;
+        private int _indiceSelecionado = -1;
+        private bool _desenharBB = false;
+        private bool _atualizandoDesenho = false;
 
         public static Mundo getInstance(int width, int height)
         {
@@ -22,13 +28,6 @@ namespace gcgcg
                 instance = new Mundo(width, height);
             return instance;
         }
-
-        private Camera camera = new Camera();
-        protected List<Desenho> objetosLista = new List<Desenho>();
-        private Desenho _novoDesenho;
-        private Ponto4D _pontoSelecionado;
-        private int _indiceSelecionado = -1;
-        private bool _desenharBB;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -57,7 +56,8 @@ namespace gcgcg
             for (var i = 0; i < objetosLista.Count; i++)
             {
                 objetosLista[i].Desenhar();
-                if(i == _indiceSelecionado && _desenharBB) 
+
+                if (i == _indiceSelecionado || _desenharBB)
                 {
                     objetosLista[i].DesenharBB();
                 }
@@ -90,22 +90,19 @@ namespace gcgcg
                     FuncoesDesenho.AlterarPrimitivaDesenhos(objetosLista);
                     break;
                 case Key.Space:
-                    _novoDesenho = null;
-                    _pontoSelecionado = null;
-                    _indiceSelecionado = -1;
-                    _desenharBB = false;
+                    FuncaoEspaco();
                     break;
                 case Key.R:
-                    _novoDesenho.AlterarCor(Color.Red);
+                    _novoDesenho.AtualizarCor(Color.Red);
                     break;
                 case Key.G:
-                    _novoDesenho.AlterarCor(Color.Green);
+                    _novoDesenho.AtualizarCor(Color.Green);
                     break;
                 case Key.B:
-                    _novoDesenho.AlterarCor(Color.Blue);
+                    _novoDesenho.AtualizarCor(Color.Blue);
                     break;
                 case Key.A:
-                    _desenharBB = true;
+                    _desenharBB = !_desenharBB;
                     break;
             }
         }
@@ -127,35 +124,63 @@ namespace gcgcg
         {
             if (e.Button == MouseButton.Left)
             {
-                if (_novoDesenho == null)
+                if (!_atualizandoDesenho)
                 {
-                    _novoDesenho = new Desenho("A");
-                    objetosLista.Add(_novoDesenho);
-                }
+                    if (_novoDesenho == null)
+                    {
+                        _novoDesenho = new Desenho("A");
+                        objetosLista.Add(_novoDesenho);
+                    }
 
-                _pontoSelecionado = new Ponto4D(e.Position.X, 600 - e.Position.Y, 0);
-                _novoDesenho.AdicionarPonto(_pontoSelecionado);
+                    _pontoSelecionado = new Ponto4D(e.Position.X, 600 - e.Position.Y, 0);
+                    _novoDesenho.AdicionarPonto(_pontoSelecionado);
+                }
+                else
+                {
+                    FuncaoEspaco();
+                }
             }
             else if (e.Button == MouseButton.Right)
             {
                 if (_novoDesenho == null)
                 {
-                    var listaPontos = objetosLista
-                                         .ConvertAll(x => x.Pontos)
-                                         .SelectMany(x => x)
-                                         .ToList();
-                    
-                     _pontoSelecionado = listaPontos.OrderBy(v => Math.Abs(v.Y - (600 - e.Position.Y)) + Math.Abs(v.X - e.Position.X)).First();
-
-
-                    for (int i = 0; i < objetosLista.Count(); i ++) {
-                        if(objetosLista[i].Pontos.Any(x => x == _pontoSelecionado)) {
-                            _indiceSelecionado = i;
-                        }
-                    }
+                    BuscarPontoMaisProximo(e);
                 }
             }
         }
+
+        #region Função da tecla espaço
+        private void FuncaoEspaco()
+        {
+            _novoDesenho = null;
+            _pontoSelecionado = null;
+            _indiceSelecionado = -1;
+            _atualizandoDesenho = false;
+            FuncoesDesenho.AtualizarValoresBBox(objetosLista);
+        }
+        #endregion
+
+        #region Método para retornar o vértice mais próximo
+        private void BuscarPontoMaisProximo(MouseButtonEventArgs e)
+        {
+            var listaPontos = objetosLista
+                                .ConvertAll(x => x.Pontos)
+                                .SelectMany(x => x)
+                                .ToList();
+
+            _pontoSelecionado = listaPontos.OrderBy(v => Math.Abs(v.Y - (600 - e.Position.Y)) + Math.Abs(v.X - e.Position.X)).First();
+
+            for (int i = 0; i < objetosLista.Count(); i++)
+            {
+                if (objetosLista[i].Pontos.Any(x => x == _pontoSelecionado))
+                {
+                    _atualizandoDesenho = true;
+                    _indiceSelecionado = i;
+                    _novoDesenho = objetosLista[_indiceSelecionado];
+                }
+            }
+        }
+        #endregion
 
         private void Sru3D()
         {
@@ -184,5 +209,4 @@ namespace gcgcg
             window.Run(1.0 / 60.0);
         }
     }
-
 }

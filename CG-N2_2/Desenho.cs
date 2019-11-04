@@ -10,8 +10,8 @@ namespace gcgcg
     {
         private List<Ponto4D> _pontos = new List<Ponto4D>();
 
-        public List<Ponto4D> Pontos 
-        { 
+        public List<Ponto4D> Pontos
+        {
             get => pontosLista;
         }
 
@@ -69,26 +69,21 @@ namespace gcgcg
             return base.pontosLista;
         }
 
-        public void AlterarCor(Color cor)
+        public void AtualizarCor(Color cor)
         {
-            ValorCorPosicaoVermelha = cor.R;
-            ValorCorPosicaoVerde = cor.G;
-            ValorCorPosicaoAzul = cor.B;
+            Cor = cor;
         }
-        
-        public void AlterarPrimitiva(bool primeiraVerificacao)
+
+        public void AlterarPrimitiva()
         {
-            if (primeiraVerificacao)
+            switch (PrimitivaTipo)
             {
-                switch (PrimitivaTipo)
-                {
-                    case PrimitiveType.LineLoop:
-                        PrimitivaTipo = PrimitiveType.LineStrip;
-                        break;
-                    case PrimitiveType.LineStrip:
-                        PrimitivaTipo = PrimitiveType.LineLoop;
-                        break;
-                }
+                case PrimitiveType.LineLoop:
+                    PrimitivaTipo = PrimitiveType.LineStrip;
+                    break;
+                case PrimitiveType.LineStrip:
+                    PrimitivaTipo = PrimitiveType.LineLoop;
+                    break;
             }
         }
     }
