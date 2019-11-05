@@ -21,11 +21,14 @@ namespace gcgcg
         private int _indiceSelecionado = -1;
         private bool _desenharBB = false;
         private bool _atualizandoDesenho = false;
+        private bool _addFilho = false;
 
         public static Mundo getInstance(int width, int height)
         {
             if (instance == null)
+            {
                 instance = new Mundo(width, height);
+            }
             return instance;
         }
 
@@ -57,9 +60,9 @@ namespace gcgcg
             {
                 objetosLista[i].Desenhar();
 
-                if (i == _indiceSelecionado || _desenharBB)
+                if (_desenharBB && _novoDesenho != null)
                 {
-                    objetosLista[i].DesenharBB();
+                    _novoDesenho.DesenharBB();
                 }
             }
 
@@ -103,6 +106,35 @@ namespace gcgcg
                     break;
                 case Key.A:
                     _desenharBB = !_desenharBB;
+                    _novoDesenho.AtribuirMatrizIdentidade();
+                    //_novoDesenho = objetosLista[objetosLista.Count - 1];
+                    break;
+                case Key.Left:
+                    _novoDesenho.Translacao(-10, 0);
+                    break;
+                case Key.Right:
+                    _novoDesenho.Translacao(10, 0);
+                    break;
+                case Key.Up:
+                    _novoDesenho.Translacao(0, 10);
+                    break;
+                case Key.Down:
+                    _novoDesenho.Translacao(0, -10);
+                    break;
+                case Key.PageUp:
+                    _novoDesenho.Escala(2);
+                    break;
+                case Key.PageDown:
+                    _novoDesenho.Escala(0.5);
+                    break;
+                case Key.Number1:
+                    _novoDesenho.Rotacao(10);
+                    break;
+                case Key.Number2:
+                    _novoDesenho.Rotacao(-10);
+                    break;
+                case Key.F:
+                    _addFilho = true;
                     break;
             }
         }
@@ -130,10 +162,16 @@ namespace gcgcg
                     {
                         _novoDesenho = new Desenho("A");
                         objetosLista.Add(_novoDesenho);
+
+                        if (_addFilho)
+                        {
+                            objetosLista[0].FilhoAdicionar(_novoDesenho);
+                        }
                     }
 
                     _pontoSelecionado = new Ponto4D(e.Position.X, 600 - e.Position.Y, 0);
                     _novoDesenho.AdicionarPonto(_pontoSelecionado);
+                    
                 }
                 else
                 {

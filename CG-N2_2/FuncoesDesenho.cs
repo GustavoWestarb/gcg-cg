@@ -34,6 +34,8 @@ namespace gcgcg
                         desenho.BBox.Atualizar(ponto);
                     }
                 }
+
+                desenho.BBox.ProcessarCentro();
             }
         }
     }

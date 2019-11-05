@@ -49,7 +49,7 @@ namespace CG_Biblioteca {
 	}
 
 	public void Desenhar() {
-    GL.Color3(Color.Brown);
+    GL.Color3(Color.Yellow);
 
     GL.PointSize(5);
     GL.Begin(PrimitiveType.Points);
