@@ -8,6 +8,10 @@ namespace gcgcg
 {
     internal class FuncoesDesenho
     {
+        /// <summary>
+        /// Alterna o tipo da primitiva entre <c>PrimitiveType.LineStrip</c> e <c>PrimitiveType.LineLoop</c> e redesenha a cena
+        /// </summary>
+        /// <param name="objetosLista">Recebe uma lista de desenhos e pega o ultimo</param>
         public static void AlterarPrimitivaDesenhos(List<Desenho> objetosLista)
         {
             var desenho = objetosLista.Last();
@@ -15,6 +19,11 @@ namespace gcgcg
             desenho.Redesenhar();
         }
 
+
+        /// <summary>
+        /// pega todos os pontos extremos da figura e atribui para a BBox
+        /// </summary>
+        /// <param name="objetosLista">Recebe uma lista de desenhos</param>
         public static void AtualizarValoresBBox(List<Desenho> objetosLista)
         {
             foreach (Desenho desenho in objetosLista)

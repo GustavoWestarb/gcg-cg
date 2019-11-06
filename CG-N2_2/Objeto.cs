@@ -29,6 +29,9 @@ namespace gcgcg
     protected PrimitiveType PrimitivaTipo { get => primitivaTipo; set => primitivaTipo = value; }
     protected float PrimitivaTamanho { get => primitivaTamanho; set => primitivaTamanho = value; }
 
+    /// <summary>
+    /// Desenha a cena.
+    /// </summary>
     public void Desenhar()
     {
       GL.PushMatrix();
@@ -44,19 +47,38 @@ namespace gcgcg
     }
 
     protected abstract void DesenharAramado();
+
+    /// <summary>
+    /// adciona um filho ao objeto atual
+    /// </summary>
+    /// <param name="filho"> Objeto Filho </param>
     public void FilhoAdicionar(Objeto filho)
     {
       this.objetosLista.Add(filho);
     }
+
+    /// <summary>
+    /// remove um filho do objeto atual
+    /// </summary>
+    /// <param name="filho"> Objeto Filho </param>
     public void FilhoRemover(Objeto filho)
     {
       this.objetosLista.Remove(filho);
     }
+
     protected abstract void PontosExibir();
+
+    /// <summary>
+    /// Exibe os pontos do objeto atual em cena
+    /// </summary>
     public void PontosExibirObjeto()
     {
       PontosExibir();
     }
+
+    /// <summary>
+    /// desenha a BBox para o objeto atual
+    /// </summary>
     public void DesenharBB()
     {
       bBox.Desenhar();
@@ -66,12 +88,23 @@ namespace gcgcg
     {
       matriz.AtribuirIdentidade();
     }
+
+
+    /// <summary>
+    /// Aplica o efeito de translação no objeto atual
+    /// </summary>
+    /// <param name="x"> Intensidade de translação no eixo das abscissas </param>
+    /// <param name="y"> Intensidade de translação no eixo das ordenadas </param>
     public void Translacao(double x, double y)
     {
       matrizTmpTranslacao.AtribuirTranslacao(x, y, 0);
       matriz = matrizTmpTranslacao.MultiplicarMatriz(matriz);
     }
 
+    /// <summary>
+    /// Adiciona a escala informada ao objeto atual
+    /// </summary>
+    /// <param name="escala"> Escala: deve ser positiva para aumentar o objeto, ou negativa para diminui-lo </param>
     public void Escala(double escala)
     {
       var matrixAuxRotacao = new Transformacao4D();
@@ -92,6 +125,10 @@ namespace gcgcg
       matriz = matriz.MultiplicarMatriz(matrixAuxRotacao); 
     }
 
+    /// <summary>
+    /// Rotaciona o objeto no angulo informado  
+    /// </summary>
+    /// <param name="escala"> angulo em que deve ser rotacionado, postivo para sentido horário e negativo anti-horário </param>
     public void Rotacao(double angulo)
     {
       var matrixAuxRotacao = new Transformacao4D();

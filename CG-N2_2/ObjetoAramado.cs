@@ -16,6 +16,9 @@ namespace gcgcg
             this.Cor = Color.White;
         }
 
+        /// <summary>
+        /// Função para desenhar todos os pontos do <c>pontosLista</c> na cena do <c>OpenTK</c>
+        /// </summary>
         protected override void DesenharAramado()
         {
             GL.LineWidth(base.PrimitivaTamanho);
@@ -30,6 +33,10 @@ namespace gcgcg
             GL.End();
         }
 
+        /// <summary>
+        /// Adiciona um ponto na <c>pontosLista</c> 
+        /// </summary>
+        /// <param name="pto">Ponto a ser adcionado</param>
         protected void PontosAdicionar(Ponto4D pto)
         {
             pontosLista.Add(pto);
@@ -46,11 +53,24 @@ namespace gcgcg
             base.BBox.ProcessarCentro();
         }
 
+        /// <summary>
+        /// Remove todos os pontos na <c>pontosLista</c> 
+        /// </summary>
         protected void PontosRemoverTodos()
         {
             pontosLista.Clear();
         }
 
+        /// <summary>
+        /// Exibe todos os pontos no console assim como suas cordenadas
+        /// </summary>
+        /// <example>
+        /// __ Objeto: A
+        /// P0[179,530,0,1]
+        /// P1[404,380,0,1]
+        /// P2[66,348,0,1]
+        /// P3[130,470,0,1]
+        /// </example>
         protected override void PontosExibir()
         {
             Console.WriteLine("__ Objeto: " + base.rotulo);
