@@ -92,8 +92,14 @@ namespace gcgcg
                 case Key.P:
                     FuncoesDesenho.AlterarPrimitivaDesenhos(objetosLista);
                     break;
-                case Key.Space:
-                    FuncaoEspaco();
+                case Key.Enter:
+                    if (_addFilho)
+                    {
+                        objetosLista[0].FilhoAdicionar(_novoDesenho);
+                    }
+                    
+                    FuncaoEnter();
+
                     break;
                 case Key.R:
                     _novoDesenho.AtualizarCor(Color.Red);
@@ -106,35 +112,76 @@ namespace gcgcg
                     break;
                 case Key.A:
                     _desenharBB = !_desenharBB;
-                    _novoDesenho.AtribuirMatrizIdentidade();
+                    _novoDesenho?.AtribuirMatrizIdentidade();
                     //_novoDesenho = objetosLista[objetosLista.Count - 1];
                     break;
                 case Key.Left:
-                    _novoDesenho.Translacao(-10, 0);
+                    _novoDesenho?.Translacao(-10, 0);
+
+                    // if (_indiceSelecionado != 1)
+                    // {
+                    //     objetosLista[_indiceSelecionado].Translacao(-10, 0);
+                    // }
+
+                    // foreach (var item in _novoDesenho.objetosLista)
+                    // {
+                    //     item.Translacao(-10, 0);
+                    // }
                     break;
                 case Key.Right:
-                    _novoDesenho.Translacao(10, 0);
+                    _novoDesenho?.Translacao(10, 0);
+
+                    // if (_indiceSelecionado != 1)
+                    // {
+                    //     objetosLista[_indiceSelecionado].Translacao(10, 0);
+                    // }
+
+                    // foreach (var item in _novoDesenho.objetosLista)
+                    // {
+                    //     item.Translacao(10, 0);
+                    // }
                     break;
                 case Key.Up:
-                    _novoDesenho.Translacao(0, 10);
+                    _novoDesenho?.Translacao(0, 10);
+
+                    // if (_indiceSelecionado != 1)
+                    // {
+                    //     objetosLista[_indiceSelecionado].Translacao(0, 10);
+                    // }
+
+
+                    // foreach (var item in _novoDesenho.objetosLista)
+                    // {
+                    //     item.Translacao(0, 10);
+                    // }
                     break;
                 case Key.Down:
-                    _novoDesenho.Translacao(0, -10);
+                    _novoDesenho?.Translacao(0, -10);
+
+                    // if (_indiceSelecionado != 1)
+                    // {
+                    //     objetosLista[_indiceSelecionado].Translacao(0, -10);
+                    // }
+
+                    foreach (var item in _novoDesenho.objetosLista)
+                    {
+                        item.Translacao(0, -10);
+                    }
                     break;
                 case Key.PageUp:
-                    _novoDesenho.Escala(2);
+                    _novoDesenho?.Escala(2);
                     break;
                 case Key.PageDown:
-                    _novoDesenho.Escala(0.5);
+                    _novoDesenho?.Escala(0.5);
                     break;
                 case Key.Number1:
-                    _novoDesenho.Rotacao(10);
+                    _novoDesenho?.Rotacao(10);
                     break;
                 case Key.Number2:
-                    _novoDesenho.Rotacao(-10);
+                    _novoDesenho?.Rotacao(-10);
                     break;
                 case Key.F:
-                    _addFilho = true;
+                    _addFilho = !_addFilho;
                     break;
             }
         }
@@ -162,11 +209,6 @@ namespace gcgcg
                     {
                         _novoDesenho = new Desenho("A");
                         objetosLista.Add(_novoDesenho);
-
-                        if (_addFilho)
-                        {
-                            objetosLista[0].FilhoAdicionar(_novoDesenho);
-                        }
                     }
 
                     _pontoSelecionado = new Ponto4D(e.Position.X, 600 - e.Position.Y, 0);
@@ -175,7 +217,7 @@ namespace gcgcg
                 }
                 else
                 {
-                    FuncaoEspaco();
+                    FuncaoEnter();
                 }
             }
             else if (e.Button == MouseButton.Right)
@@ -188,7 +230,7 @@ namespace gcgcg
         }
 
         #region Função da tecla espaço
-        private void FuncaoEspaco()
+        private void FuncaoEnter()
         {
             _novoDesenho = null;
             _pontoSelecionado = null;
@@ -206,7 +248,7 @@ namespace gcgcg
                                 .SelectMany(x => x)
                                 .ToList();
 
-            _pontoSelecionado = listaPontos.OrderBy(v => Math.Abs(v.Y - (600 - e.Position.Y)) + Math.Abs(v.X - e.Position.X)).First();
+            _pontoSelecionado = listaPontos?.OrderBy(v => Math.Abs(v.Y - (600 - e.Position.Y)) + Math.Abs(v.X - e.Position.X)).First();
 
             for (int i = 0; i < objetosLista.Count(); i++)
             {
@@ -243,7 +285,7 @@ namespace gcgcg
         static void Main(string[] args)
         {
             Mundo window = Mundo.getInstance(600, 600);
-            window.Title = "CG-N2_2";
+            window.Title = "TRABALHO 03";
             window.Run(1.0 / 60.0);
         }
     }

@@ -15,15 +15,11 @@ namespace gcgcg
       get => bBox;
       set => bBox = value;
     }
-    private List<Objeto> objetosLista = new List<Objeto>();
+    public List<Objeto> objetosLista = new List<Objeto>();
 
-    private Transformacao4D matrix = new Transformacao4D();
+    private Transformacao4D matriz = new Transformacao4D();
 
     private static Transformacao4D matrizTmpTranslacao = new Transformacao4D();
-    private static Transformacao4D matrizTmpTranslacaoInversa = new Transformacao4D();
-    private static Transformacao4D matrizTmpEscala = new Transformacao4D();
-    private static Transformacao4D matrizTmpRotacao = new Transformacao4D();
-    private static Transformacao4D matrizGlobal = new Transformacao4D();
 
     public Objeto(string rotulo)
     {
@@ -36,7 +32,7 @@ namespace gcgcg
     public void Desenhar()
     {
       GL.PushMatrix();
-      GL.MultMatrix(matrix.ObterDados());
+      GL.MultMatrix(matriz.ObterDados());
       DesenharAramado();
 
       for (var i = 0; i < objetosLista.Count; i++)
@@ -68,13 +64,12 @@ namespace gcgcg
 
     public void AtribuirMatrizIdentidade()
     {
-      matrix.AtribuirIdentidade();
+      matriz.AtribuirIdentidade();
     }
     public void Translacao(double x, double y)
     {
-      var matrixAux = new Transformacao4D();
-      matrixAux.AtribuirTranslacao(x, y, 0);
-      matrix = matrixAux.MultiplicarMatriz(matrix);
+      matrizTmpTranslacao.AtribuirTranslacao(x, y, 0);
+      matriz = matrizTmpTranslacao.MultiplicarMatriz(matriz);
     }
 
     public void Escala(double escala)
@@ -94,7 +89,7 @@ namespace gcgcg
       matrixAuxTransInv.AtribuirTranslacao(pontoCentroBB.X, pontoCentroBB.Y, pontoCentroBB.Z);
       matrixAuxRotacao = matrixAuxTransInv.MultiplicarMatriz(matrixAuxRotacao); 
 
-      matrix = matrix.MultiplicarMatriz(matrixAuxRotacao); 
+      matriz = matriz.MultiplicarMatriz(matrixAuxRotacao); 
     }
 
     public void Rotacao(double angulo)
@@ -114,7 +109,7 @@ namespace gcgcg
       matrixAuxTransInv.AtribuirTranslacao(pontoCentroBB.X, pontoCentroBB.Y, pontoCentroBB.Z);
       matrixAuxRotacao = matrixAuxTransInv.MultiplicarMatriz(matrixAuxRotacao); 
 
-      matrix = matrix.MultiplicarMatriz(matrixAuxRotacao);
+      matriz = matriz.MultiplicarMatriz(matrixAuxRotacao);
     }
   }
 }

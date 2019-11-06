@@ -4,29 +4,12 @@
 title Diagrama de Classes
 footer Grupo GCG - [[http://gcg.inf.furb.br]]
 
-<<<<<<< Updated upstream
 !include ../CG_Biblioteca/docs/umlClasses.wsd
-=======
-!include ../gcg-cg/CG_Biblioteca/docs/umlClasses.wsd
->>>>>>> Stashed changes
 
 Program : Mundo window
 Program : {static} void Main(string[] args)
 Program o-down- Mundo
 
-<<<<<<< Updated upstream
-Mundo : + {static} Mundo instance
-Mundo : + Mundo(int width, int height)
-Mundo : + static Mundo getInstance()
-Mundo : - Camera camera
-Mundo : # List<Objeto> objetosLista
-Mundo : # override void OnLoad(EventArgs e)
-Mundo : # override void OnUpdateFrame(FrameEventArgs e)
-Mundo : # override void OnRenderFrame(FrameEventArgs e)
-Mundo : # override void OnKeyDown(OpenTK.Input.KeyboardKeyEventArgs e)
-Mundo : # override void OnMouseMove(MouseMoveEventArgs e)
-Mundo : - void Sru3D()
-=======
 Mundo : getInstance()
 Mundo : Camera camera
 Mundo : ObjetoAramado poligonoAtual 
@@ -38,7 +21,6 @@ Mundo : override void OnRenderFrame(FrameEventArgs e)
 Mundo : override void OnKeyDown(OpenTK.Input.KeyboardKeyEventArgs e)
 Mundo : override void OnMouseMove(MouseMoveEventArgs e)
 Mundo : void Sru3D()
->>>>>>> Stashed changes
 Mundo o-down- Objeto
 Camera <-left- Mundo
 

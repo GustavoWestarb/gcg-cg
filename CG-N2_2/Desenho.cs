@@ -15,10 +15,7 @@ namespace gcgcg
             get => pontosLista;
         }
 
-        public Desenho(string rotulo) : base(rotulo)
-        {
-            base.Desenhar();
-        }
+        public Desenho(string rotulo) : base(rotulo){}
 
         public void AdicionarPonto(Ponto4D ponto)
         {
