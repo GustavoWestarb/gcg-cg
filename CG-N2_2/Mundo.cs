@@ -226,6 +226,27 @@ namespace gcgcg
                 {
                     BuscarPontoMaisProximo(e);
                 }
+
+                // VerificarPoligno(new Ponto4D(e.Position.X, 600 - e.Position.Y, 0));
+            }
+        }
+
+        private void VerificarPoligno(Ponto4D ponto)
+        {
+            foreach (var objeto in objetosLista)
+            {
+                int resultado = objeto.PontoEmPoligno(ponto);
+
+                if ((resultado % 2) == 0)
+                {
+                    Console.WriteLine("Fora");
+                }
+                else
+                {
+                    Console.WriteLine("Dentro");
+                    _novoDesenho = objeto;
+                    _novoDesenho.DesenharBB();
+                }
             }
         }
 

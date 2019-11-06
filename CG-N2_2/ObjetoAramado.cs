@@ -34,6 +34,49 @@ namespace gcgcg
         }
 
         /// <summary>
+        /// Verifica se o clique do mouse foi dentro ou fora do poligno
+        /// </summary>
+        public int PontoEmPoligno(Ponto4D clique)
+        {
+            if (pontosLista.Count > 1)
+            {
+                int qtdInterseccao = 0;
+
+                for (int i = 0; i < pontosLista.Count; i++)
+                {
+                    Ponto4D pontoB;
+
+                    if ((i + 1) < pontosLista.Count)
+                    {
+                        pontoB = pontosLista[i + 1];
+                    }
+                    else
+                    {
+                        pontoB = pontosLista[0];
+                    }
+
+                    Ponto4D pontoA = pontosLista[i];
+                    int primeiroValor = (int)(clique.Y - pontoA.Y);
+                    int segundoValor = (int)(pontoB.Y - pontoA.Y);
+                    float valorTi = (float)primeiroValor / segundoValor;
+
+                    if (valorTi > 0 && valorTi < 1)
+                    {
+                        int valorXi = (int)(pontoA.X + ((pontoB.X - pontoA.X) * valorTi));
+
+                        if (valorXi >= clique.X)
+                        {
+                            qtdInterseccao++;
+                        }
+                    }
+                }
+
+                return qtdInterseccao;
+            }
+            return -1;
+        }
+
+        /// <summary>
         /// Adiciona um ponto na <c>pontosLista</c> 
         /// </summary>
         /// <param name="pto">Ponto a ser adcionado</param>
