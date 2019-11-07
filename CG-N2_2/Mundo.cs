@@ -10,304 +10,263 @@ using System.Linq;
 
 namespace gcgcg
 {
-    class Mundo : GameWindow
-    {
-        private static Mundo instance = null;
-        private Mundo(int width, int height) : base(width, height) { }
-        private Camera camera = new Camera();
-        protected List<Desenho> objetosLista = new List<Desenho>();
-        private Desenho _novoDesenho;
-        private Ponto4D _pontoSelecionado;
-        private int _indiceSelecionado = -1;
-        private bool _desenharBB = false;
-        private bool _atualizandoDesenho = false;
-        private bool _addFilho = false;
+	class Mundo : GameWindow
+	{
+		private List<ObjetoAramado> _objetoLista = new List<ObjetoAramado>();
+		private static Mundo instance = null;
+		private Camera camera = new Camera();
+		private ObjetoAramado _objetoEmFoco;
+		private ObjetoAramado _objetoSelecionado;
+		private Ponto4D _pontoSelecionado;
+		private bool _desenharBB = false;
+		private bool _atualizandoDesenho = false;
+		private bool _buscarVerticeMaisProximo = false;
 
-        public static Mundo getInstance(int width, int height)
-        {
-            if (instance == null)
-            {
-                instance = new Mundo(width, height);
-            }
-            return instance;
-        }
+		#region Construtores
+		private Mundo(int width, int height) : base(width, height) { }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
+		public static Mundo getInstance(int width, int height)
+		{
+			if (instance == null)
+			{
+				instance = new Mundo(width, height);
+			}
 
-            GL.ClearColor(Color.Gray);
-        }
-        protected override void OnUpdateFrame(FrameEventArgs e)
-        {
-            base.OnUpdateFrame(e);
+			return instance;
+		}
+		#endregion
 
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadIdentity();
-            GL.Ortho(camera.xmin, camera.xmax, camera.ymin, camera.ymax, camera.zmin, camera.zmax);
-        }
-        protected override void OnRenderFrame(FrameEventArgs e)
-        {
-            base.OnRenderFrame(e);
+		#region Métodos originais da classe
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+			GL.ClearColor(Color.Gray);
+		}
 
-            GL.Clear(ClearBufferMask.ColorBufferBit);
-            GL.MatrixMode(MatrixMode.Modelview);
-            GL.LoadIdentity();
+		protected override void OnUpdateFrame(FrameEventArgs e)
+		{
+			base.OnUpdateFrame(e);
 
-            Sru3D();
+			GL.MatrixMode(MatrixMode.Projection);
+			GL.LoadIdentity();
+			GL.Ortho(camera.xmin, camera.xmax, camera.ymin, camera.ymax, camera.zmin, camera.zmax);
+		}
 
-            for (var i = 0; i < objetosLista.Count; i++)
-            {
-                objetosLista[i].Desenhar();
+		protected override void OnRenderFrame(FrameEventArgs e)
+		{
+			base.OnRenderFrame(e);
 
-                if (_desenharBB && _novoDesenho != null)
-                {
-                    _novoDesenho.DesenharBB();
-                }
-            }
+			GL.Clear(ClearBufferMask.ColorBufferBit);
+			GL.MatrixMode(MatrixMode.Modelview);
+			GL.LoadIdentity();
 
-            this.SwapBuffers();
-        }
+			Sru3D();
 
-        protected override void OnKeyDown(OpenTK.Input.KeyboardKeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Escape:
-                    Exit();
-                    break;
-                case Key.E:
-                    for (var i = 0; i < objetosLista.Count; i++)
-                    {
-                        objetosLista[i].PontosExibirObjeto();
-                    }
-                    break;
-                case Key.D:
-                    if (_pontoSelecionado != null)
-                    {
-                        objetosLista[_indiceSelecionado].RemoverPonto(_pontoSelecionado);
-                        _pontoSelecionado = null;
-                    }
-                    break;
-                case Key.P:
-                    FuncoesDesenho.AlterarPrimitivaDesenhos(objetosLista);
-                    break;
-                case Key.Enter:
-                    if (_addFilho)
-                    {
-                        objetosLista[0].FilhoAdicionar(_novoDesenho);
-                    }
-                    
-                    FuncaoEnter();
+			for (var i = 0; i < _objetoLista.Count; i++)
+			{
+				_objetoLista[i].Desenhar();
 
-                    break;
-                case Key.R:
-                    _novoDesenho.AtualizarCor(Color.Red);
-                    break;
-                case Key.G:
-                    _novoDesenho.AtualizarCor(Color.Green);
-                    break;
-                case Key.B:
-                    _novoDesenho.AtualizarCor(Color.Blue);
-                    break;
-                case Key.A:
-                    _desenharBB = !_desenharBB;
-                    _novoDesenho?.AtribuirMatrizIdentidade();
-                    //_novoDesenho = objetosLista[objetosLista.Count - 1];
-                    break;
-                case Key.Left:
-                    _novoDesenho?.Translacao(-10, 0);
+				if (_desenharBB && _objetoEmFoco != null)
+				{
+					_objetoEmFoco.DesenharBB();
+				}
 
-                    // if (_indiceSelecionado != 1)
-                    // {
-                    //     objetosLista[_indiceSelecionado].Translacao(-10, 0);
-                    // }
+				if (_objetoSelecionado != null)
+				{
+					_objetoSelecionado.DesenharBB();
+				}
+			}
 
-                    // foreach (var item in _novoDesenho.objetosLista)
-                    // {
-                    //     item.Translacao(-10, 0);
-                    // }
-                    break;
-                case Key.Right:
-                    _novoDesenho?.Translacao(10, 0);
+			this.SwapBuffers();
+		}
 
-                    // if (_indiceSelecionado != 1)
-                    // {
-                    //     objetosLista[_indiceSelecionado].Translacao(10, 0);
-                    // }
+		protected override void OnKeyDown(OpenTK.Input.KeyboardKeyEventArgs e)
+		{
+			switch (e.Key)
+			{
+				case Key.Escape:
+					Exit();
+					break;
+				case Key.E:
+					Funcoes.FuncaoKeyE(_objetoLista);
+					break;
+				case Key.D:
+					if (_pontoSelecionado != null)
+					{
+						_objetoSelecionado.RemoverPonto(_pontoSelecionado);
+						_pontoSelecionado = null;
+					}
+					break;
+				case Key.P:
+					Funcoes.AlterarPrimitivaObjetoAtual(_objetoEmFoco);
+					break;
+				case Key.Enter:
+					FuncaoEnter();
+					break;
+				case Key.R:
+					_objetoSelecionado.AlterarCor(Color.Red);
+					break;
+				case Key.G:
+					_objetoSelecionado.AlterarCor(Color.Green);
+					break;
+				case Key.B:
+					_objetoSelecionado.AlterarCor(Color.Blue);
+					break;
+				case Key.A:
+					_desenharBB = !_desenharBB;
+					_objetoSelecionado?.AtribuirMatrizIdentidade();
+					break;
+				case Key.Left:
+					_objetoSelecionado?.Translacao(-10, 0);
+					break;
+				case Key.Right:
+					_objetoSelecionado?.Translacao(10, 0);
+					break;
+				case Key.Up:
+					_objetoSelecionado?.Translacao(0, 10);
+					break;
+				case Key.Down:
+					_objetoSelecionado?.Translacao(0, -10);
 
-                    // foreach (var item in _novoDesenho.objetosLista)
-                    // {
-                    //     item.Translacao(10, 0);
-                    // }
-                    break;
-                case Key.Up:
-                    _novoDesenho?.Translacao(0, 10);
+					foreach (var item in _objetoSelecionado.ObjetosLista)
+					{
+						item.Translacao(0, -10);
+					}
+					break;
+				case Key.PageUp:
+					_objetoSelecionado?.Escala(2);
+					break;
+				case Key.PageDown:
+					_objetoSelecionado?.Escala(0.5);
+					break;
+				case Key.Number1:
+					_objetoSelecionado?.Rotacao(10);
+					break;
+				case Key.Number2:
+					_objetoSelecionado?.Rotacao(-10);
+					break;
+				case Key.F:
+					_buscarVerticeMaisProximo = !_buscarVerticeMaisProximo;
+					break;
+			}
+		}
 
-                    // if (_indiceSelecionado != 1)
-                    // {
-                    //     objetosLista[_indiceSelecionado].Translacao(0, 10);
-                    // }
+		protected override void OnMouseMove(MouseMoveEventArgs e)
+		{
+			if (_pontoSelecionado != null)
+			{
+				_pontoSelecionado.X = e.Position.X;
+				_pontoSelecionado.Y = 600 - e.Position.Y;
+			}
+			else
+			if (_objetoEmFoco != null && _objetoEmFoco.RetornarQuantidadePontos() > 0)
+			{
+				_objetoEmFoco.MoverUltimoPonto(new Ponto4D(e.Position.X, 600 - e.Position.Y, 0));
+			}
+		}
 
+		protected override void OnMouseDown(MouseButtonEventArgs e)
+		{
+			if (e.Button == MouseButton.Left)
+			{
+				if (!_atualizandoDesenho)
+				{
+					if (_objetoEmFoco == null)
+					{
+						_objetoEmFoco = new ObjetoAramado("A");
 
-                    // foreach (var item in _novoDesenho.objetosLista)
-                    // {
-                    //     item.Translacao(0, 10);
-                    // }
-                    break;
-                case Key.Down:
-                    _novoDesenho?.Translacao(0, -10);
+						if (_objetoSelecionado != null)
+						{
+							_objetoSelecionado.FilhoAdicionar(_objetoEmFoco);
+						}
+						else
+						{
+							_objetoLista.Add(_objetoEmFoco);
+						}
+					}
 
-                    // if (_indiceSelecionado != 1)
-                    // {
-                    //     objetosLista[_indiceSelecionado].Translacao(0, -10);
-                    // }
+					_pontoSelecionado = new Ponto4D(e.Position.X, 600 - e.Position.Y, 0);
+					_objetoEmFoco.AdicionarPonto(_pontoSelecionado);
+				}
+				else
+				{
+					FuncaoEnter();
+				}
+			}
+			else
+				if (e.Button == MouseButton.Right)
+			{
+				Ponto4D pontoClique = new Ponto4D(e.Position.X, 600 - e.Position.Y, 0);
 
-                    foreach (var item in _novoDesenho.objetosLista)
-                    {
-                        item.Translacao(0, -10);
-                    }
-                    break;
-                case Key.PageUp:
-                    _novoDesenho?.Escala(2);
-                    break;
-                case Key.PageDown:
-                    _novoDesenho?.Escala(0.5);
-                    break;
-                case Key.Number1:
-                    _novoDesenho?.Rotacao(10);
-                    break;
-                case Key.Number2:
-                    _novoDesenho?.Rotacao(-10);
-                    break;
-                case Key.F:
-                    _addFilho = !_addFilho;
-                    break;
-            }
-        }
+				if (_buscarVerticeMaisProximo)
+				{
+					BuscarPontoMaisProximo(e);
+				}
+				else
+				{
+					Funcoes.SelecionarPoligno(_objetoLista, pontoClique, ref _objetoSelecionado);
+				}
+			}
+		}
 
-        protected override void OnMouseMove(MouseMoveEventArgs e)
-        {
-            if (_pontoSelecionado != null)
-            {
-                _pontoSelecionado.X = e.Position.X;
-                _pontoSelecionado.Y = 600 - e.Position.Y;
-            }
-            else if (_novoDesenho != null && _novoDesenho.RetornarQuantidadePontos() > 0)
-            {
-                _novoDesenho.MoverUltimoPonto(new Ponto4D(e.Position.X, 600 - e.Position.Y, 0));
-            }
-        }
+		private void Sru3D()
+		{
+			GL.LineWidth(1);
+			GL.Begin(PrimitiveType.Lines);
+			GL.Color3(Color.Red);
+			GL.Vertex3(0, 0, 0);
+			GL.Vertex3(200, 0, 0);
+			GL.Color3(Color.Green);
+			GL.Vertex3(0, 0, 0);
+			GL.Vertex3(0, 200, 0);
+			GL.Color3(Color.Blue);
+			GL.Vertex3(0, 0, 0);
+			GL.Vertex3(0, 0, 200);
+			GL.End();
+		}
+		#endregion
 
-        protected override void OnMouseDown(MouseButtonEventArgs e)
-        {
-            if (e.Button == MouseButton.Left)
-            {
-                if (!_atualizandoDesenho)
-                {
-                    if (_novoDesenho == null)
-                    {
-                        _novoDesenho = new Desenho("A");
-                        objetosLista.Add(_novoDesenho);
-                    }
+		#region Métodos adicionais
+		private void FuncaoEnter()
+		{
+			Funcoes.AtualizarBBoxObjetoAtual(_objetoEmFoco);
+			_objetoEmFoco = null;
+			_pontoSelecionado = null;
+			_atualizandoDesenho = false;
+		}
 
-                    _pontoSelecionado = new Ponto4D(e.Position.X, 600 - e.Position.Y, 0);
-                    _novoDesenho.AdicionarPonto(_pontoSelecionado);
-                    
-                }
-                else
-                {
-                    FuncaoEnter();
-                }
-            }
-            else if (e.Button == MouseButton.Right)
-            {
-                if (_novoDesenho == null)
-                {
-                    BuscarPontoMaisProximo(e);
-                }
+		/// <summary>
+		/// Busca o ponto mais próximo de um objeto
+		/// </summary>
+		private void BuscarPontoMaisProximo(MouseButtonEventArgs e)
+		{
+			var listaPontos = _objetoLista
+								.ConvertAll(x => x.RetornarListaDePontos())
+								.SelectMany(x => x)
+								.ToList();
 
-                // VerificarPoligno(new Ponto4D(e.Position.X, 600 - e.Position.Y, 0));
-            }
-        }
+			_pontoSelecionado = listaPontos?.OrderBy(v => Math.Abs(v.Y - (600 - e.Position.Y)) + Math.Abs(v.X - e.Position.X)).First();
 
-        private void VerificarPoligno(Ponto4D ponto)
-        {
-            foreach (var objeto in objetosLista)
-            {
-                int resultado = objeto.PontoEmPoligno(ponto);
+			for (int i = 0; i < _objetoLista.Count(); i++)
+			{
+				if (_objetoLista[i].RetornarListaDePontos().Any(x => x == _pontoSelecionado))
+				{
+					_atualizandoDesenho = true;
+					_objetoSelecionado = _objetoLista[i];
+					_objetoEmFoco = _objetoLista[i];
+				}
+			}
+		}
+		#endregion
+	}
 
-                if ((resultado % 2) == 0)
-                {
-                    Console.WriteLine("Fora");
-                }
-                else
-                {
-                    Console.WriteLine("Dentro");
-                    _novoDesenho = objeto;
-                    _novoDesenho.DesenharBB();
-                }
-            }
-        }
-
-        #region Função da tecla espaço
-        private void FuncaoEnter()
-        {
-            _novoDesenho = null;
-            _pontoSelecionado = null;
-            _indiceSelecionado = -1;
-            _atualizandoDesenho = false;
-            FuncoesDesenho.AtualizarValoresBBox(objetosLista);
-        }
-        #endregion
-
-        #region Método para retornar o vértice mais próximo
-        private void BuscarPontoMaisProximo(MouseButtonEventArgs e)
-        {
-            var listaPontos = objetosLista
-                                .ConvertAll(x => x.Pontos)
-                                .SelectMany(x => x)
-                                .ToList();
-
-            _pontoSelecionado = listaPontos?.OrderBy(v => Math.Abs(v.Y - (600 - e.Position.Y)) + Math.Abs(v.X - e.Position.X)).First();
-
-            for (int i = 0; i < objetosLista.Count(); i++)
-            {
-                if (objetosLista[i].Pontos.Any(x => x == _pontoSelecionado))
-                {
-                    _atualizandoDesenho = true;
-                    _indiceSelecionado = i;
-                    _novoDesenho = objetosLista[_indiceSelecionado];
-                }
-            }
-        }
-        #endregion
-
-        private void Sru3D()
-        {
-            GL.LineWidth(1);
-            GL.Begin(PrimitiveType.Lines);
-            GL.Color3(Color.Red);
-            GL.Vertex3(0, 0, 0);
-            GL.Vertex3(200, 0, 0);
-            GL.Color3(Color.Green);
-            GL.Vertex3(0, 0, 0);
-            GL.Vertex3(0, 200, 0);
-            GL.Color3(Color.Blue);
-            GL.Vertex3(0, 0, 0);
-            GL.Vertex3(0, 0, 200);
-            GL.End();
-        }
-
-    }
-
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Mundo window = Mundo.getInstance(600, 600);
-            window.Title = "TRABALHO 03";
-            window.Run(1.0 / 60.0);
-        }
-    }
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			Mundo window = Mundo.getInstance(600, 600);
+			window.Title = "TRABALHO 03";
+			window.Run(1.0 / 60.0);
+		}
+	}
 }

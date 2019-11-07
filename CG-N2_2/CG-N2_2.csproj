@@ -1,5 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -7,17 +6,12 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\documentação.XML</DocumentationFile>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="4.5.0" />
     <PackageReference Include="OpenTK" Version="3.0.1" />
     <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
   </ItemGroup>
-
   <ItemGroup>
-     <Reference Include="CG_Biblioteca">
-       <HintPath>..\CG_Biblioteca\bin\Debug\netstandard2.0\CG_Biblioteca.dll</HintPath>
-     </Reference>
+    <ProjectReference Include="..\CG_Biblioteca\CG_Biblioteca.csproj" />
   </ItemGroup>
-
 </Project>

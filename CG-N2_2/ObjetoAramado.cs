@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using CG_Biblioteca;
 using OpenTK.Graphics.OpenGL;
 
@@ -9,20 +10,77 @@ namespace gcgcg
     internal class ObjetoAramado : Objeto
     {
         protected List<Ponto4D> pontosLista = new List<Ponto4D>();
-        protected Color Cor;
+        private Color _cor;
 
         public ObjetoAramado(string rotulo) : base(rotulo)
         {
-            this.Cor = Color.White;
+            this._cor = Color.White;
         }
 
-        /// <summary>
-        /// Função para desenhar todos os pontos do <c>pontosLista</c> na cena do <c>OpenTK</c>
-        /// </summary>
-        protected override void DesenharAramado()
+		/// <summary>
+		/// Muda a cor do poligono
+		/// </summary>
+		/// <param name="cor">Nova cor</param>
+		public void AlterarCor(Color cor)
+		{
+			this._cor = cor;
+		}
+
+		/// <summary>
+		/// Move o último ponto da lista.
+		/// </summary>
+		/// <param name="ponto">Novos valores para o último ponto.</param>
+		public void MoverUltimoPonto(Ponto4D ponto)
+		{
+			this.pontosLista[this.pontosLista.Count - 1] = ponto;
+		}
+
+		/// <summary>
+		/// Função utilizada para adcionar um ponto ao poligono atual, chama a função <c>AdcionarPonto</c> e <c>DesenharAramado</c> da super classe
+		/// que adiciona os pontos na lista <c>base.pontosLista</c> da super classe e desenha os pontos em tela utilizando o openTK
+		/// </summary>
+		/// <param name="ponto">Ponto a ser adcionado</param>
+		public void AdicionarPonto(Ponto4D ponto)
+		{
+			PontosAdicionar(ponto);
+			PontosAdicionar(ponto);
+			DesenharAramado();
+		}
+
+		/// <summary>
+		/// Remove o ponto informado da <c>base.pontosLista</c>, recria o poligono e redesenha ele.
+		/// </summary>
+		/// Veja <see cref="Desenho.Redesenhar()"/> Para redesenhar o poligono
+		/// <param name="ponto">Ponto a ser removido</param>
+		public void RemoverPonto(Ponto4D ponto)
+		{
+			pontosLista.Remove(ponto);
+			DesenharAramado();
+		}
+
+		/// <summary>
+		/// Retornar a lista de pontos
+		/// </summary>
+		public List<Ponto4D> RetornarListaDePontos()
+		{
+			return this.pontosLista;
+		}
+
+		/// <summary>
+		/// Conta quantos pontos estão na <c>base.pontosLista</c>
+		/// </summary>
+		public int RetornarQuantidadePontos()
+		{
+			return pontosLista.Count;
+		}
+
+		/// <summary>
+		/// Função para desenhar todos os pontos do <c>pontosLista</c> na cena do <c>OpenTK</c>
+		/// </summary>
+		protected override void DesenharAramado()
         {
             GL.LineWidth(base.PrimitivaTamanho);
-            GL.Color3(Cor);
+            GL.Color3(this._cor);
             GL.Begin(PrimitivaTipo);
 
             foreach (Ponto4D pto in pontosLista)
@@ -34,8 +92,10 @@ namespace gcgcg
         }
 
         /// <summary>
-        /// Verifica se o clique do mouse foi dentro ou fora do poligno
-        /// </summary>
+	    /// Verifica se o clique do usuário foi dentro ou fora do poligno. 
+	    /// </summary>
+	    /// <param name="clique">Ponto</param>
+	    /// <returns></returns>
         public int PontoEmPoligno(Ponto4D clique)
         {
             if (pontosLista.Count > 1)
@@ -44,7 +104,8 @@ namespace gcgcg
 
                 for (int i = 0; i < pontosLista.Count; i++)
                 {
-                    Ponto4D pontoB;
+					Ponto4D pontoA = pontosLista[i];
+					Ponto4D pontoB;
 
                     if ((i + 1) < pontosLista.Count)
                     {
@@ -55,16 +116,13 @@ namespace gcgcg
                         pontoB = pontosLista[0];
                     }
 
-                    Ponto4D pontoA = pontosLista[i];
-                    int primeiroValor = (int)(clique.Y - pontoA.Y);
-                    int segundoValor = (int)(pontoB.Y - pontoA.Y);
-                    float valorTi = (float)primeiroValor / segundoValor;
+                    float valorInterseccao = (float)((clique.Y - pontoA.Y)/ (pontoB.Y - pontoA.Y));
 
-                    if (valorTi > 0 && valorTi < 1)
+                    if (valorInterseccao > 0 && valorInterseccao < 1)
                     {
-                        int valorXi = (int)(pontoA.X + ((pontoB.X - pontoA.X) * valorTi));
+                        int valorResultanteXi = (int)(pontoA.X + ((pontoB.X - pontoA.X) * valorInterseccao));
 
-                        if (valorXi >= clique.X)
+                        if (valorResultanteXi >= clique.X)
                         {
                             qtdInterseccao++;
                         }
@@ -73,6 +131,7 @@ namespace gcgcg
 
                 return qtdInterseccao;
             }
+
             return -1;
         }
 
@@ -116,7 +175,7 @@ namespace gcgcg
         /// </example>
         protected override void PontosExibir()
         {
-            Console.WriteLine("__ Objeto: " + base.rotulo);
+            Console.WriteLine("__ Objeto: " + base.Rotulo);
             for (var i = 0; i < pontosLista.Count; i++)
             {
                 Console.WriteLine("P" + i + "[" + pontosLista[i].X + "," + pontosLista[i].Y + "," + pontosLista[i].Z + "," + pontosLista[i].W + "]");
